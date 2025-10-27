@@ -6,7 +6,7 @@ from datetime import datetime
 class SalesService:
     
     @staticmethod
-    def get_all_sales(start_date=None, end_date=None, payment_method=None):
+    def get_all_sales(start_date=None, end_date=None, payment_method=None, customer_name=None):
         query = Sale.query
         
         if start_date:
@@ -17,6 +17,9 @@ class SalesService:
         
         if payment_method:
             query = query.filter_by(payment_method=payment_method)
+
+        if customer_name:
+            query = query.filter(Sale.customer_name.ilike(f"%{customer_name}%"))
         
         return query.order_by(Sale.created_at.desc()).all()
     

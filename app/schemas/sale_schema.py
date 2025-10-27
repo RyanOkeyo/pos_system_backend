@@ -11,7 +11,7 @@ class SaleCreate(BaseModel):
     customer_name: Optional[str] = None
     customer_phone: Optional[str] = None
     items: List[SaleItemCreate]
-    payment_method: str = Field(..., pattern='^(cash|card|mobile)$')
+    payment_method: str = Field(..., pattern='^(cash|mpesa)$')
     discount_amount: Optional[float] = Field(0, ge=0)
 
 class SaleItemResponse(BaseModel):

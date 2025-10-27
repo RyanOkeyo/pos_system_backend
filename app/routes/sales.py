@@ -5,11 +5,13 @@ from datetime import datetime
 
 sales_bp = Blueprint('sales', __name__)
 
-@sales_bp.route('/', methods=['GET'])
+@sales_bp.route('', methods=['GET'], strict_slashes=False)
+@sales_bp.route('/', methods=['GET'], strict_slashes=False)
 def get_sales():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
     payment_method = request.args.get('payment_method')
+    customer_name = request.args.get('customer_name')
     
     # Convert date strings to datetime 
     if start_date:
@@ -20,7 +22,8 @@ def get_sales():
     sales = SalesService.get_all_sales(
         start_date=start_date,
         end_date=end_date,
-        payment_method=payment_method
+    payment_method=payment_method,
+    customer_name=customer_name
     )
     
     return jsonify({
@@ -44,7 +47,8 @@ def get_sale(sale_id):
         'data': sale.to_dict()
     }), 200
 
-@sales_bp.route('/', methods=['POST'])
+@sales_bp.route('', methods=['POST'], strict_slashes=False)
+@sales_bp.route('/', methods=['POST'], strict_slashes=False)
 def create_sale():
     try:
         data = request.get_json()
