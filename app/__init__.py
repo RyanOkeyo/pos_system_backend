@@ -41,6 +41,10 @@ def create_app():
     app.register_blueprint(dashboard_bp, url_prefix='/api/dashboard')
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
+    @app.route('/')
+    def index():
+        return {"status": "healthy"}
+
     return app
 
 
