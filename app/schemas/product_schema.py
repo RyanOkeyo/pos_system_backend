@@ -6,8 +6,10 @@ class ProductCreate(BaseModel):
     description: Optional[str] = None
     category: Optional[str] = None
     sale_price: float = Field(..., gt=0)
+    buying_price: Optional[float] = Field(None, ge=0)
     rent_price_per_day: Optional[float] = Field(None, ge=0)
     quantity_in_stock: int = Field(0, ge=0)
+    reorder_level: Optional[int] = Field(None, ge=0)
     barcode: Optional[str] = None
     sku: Optional[str] = None
 
@@ -16,8 +18,10 @@ class ProductUpdate(BaseModel):
     description: Optional[str] = None
     category: Optional[str] = None
     sale_price: Optional[float] = Field(None, gt=0)
+    buying_price: Optional[float] = Field(None, ge=0)
     rent_price_per_day: Optional[float] = Field(None, ge=0)
     quantity_in_stock: Optional[int] = Field(None, ge=0)
+    reorder_level: Optional[int] = Field(None, ge=0)
     barcode: Optional[str] = None
     sku: Optional[str] = None
 
@@ -27,8 +31,10 @@ class ProductResponse(BaseModel):
     description: Optional[str]
     category: Optional[str]
     sale_price: float
+    buying_price: Optional[float]
     rent_price_per_day: Optional[float]
     quantity_in_stock: int
+    reorder_level: Optional[int]
     quantity_rented: int
     barcode: Optional[str]
     sku: Optional[str]

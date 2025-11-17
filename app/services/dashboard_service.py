@@ -41,11 +41,12 @@ class DashboardService:
         
         # Low stock products (less than 10 units)
         low_stock_products = Product.query.filter(
+            Product.is_active == True,
             Product.quantity_in_stock < 10
         ).count()
         
         # Total products
-        total_products = Product.query.count()
+        total_products = Product.query.filter(Product.is_active == True).count()
         
         return {
             'sales': {
@@ -110,3 +111,94 @@ class DashboardService:
             }
             for r in sales_by_date
         ]
+    
+    @staticmethod
+    def get_cashflow_by_date(days=30):
+        end_date = datetime.utcnow()
+        start_date = end_date - timedelta(days=days)
+
+        # Sales revenue by date
+        sales_by_date = db.session.query(
+            func.date(Sale.created_at).label('date'),
+            func.sum(Sale.total_amount).label('revenue')
+        ).filter(
+            Sale.created_at >= start_date,
+            Sale.created_at <= end_date
+        ).group_by('date').all()
+
+        # Rents revenue by date
+        rents_by_date = db.session.query(
+            func.date(Rent.created_at).label('date'),
+            func.sum(Rent.total_amount).label('revenue')
+        ).filter(
+            Rent.created_at >= start_date,
+            Rent.created_at <= end_date
+        ).group_by('date').all()
+
+        # Combine and format the data
+        cashflow_data = {}
+        for row in sales_by_date:
+            date_str = row.date
+            if date_str not in cashflow_data:
+                cashflow_data[date_str] = {'sales': 0, 'rents': 0}
+            cashflow_data[date_str]['sales'] += row.revenue
+
+        for row in rents_by_date:
+            date_str = row.date.isoformat()
+            if date_str not in cashflow_data:
+                cashflow_data[date_str] = {'sales': 0, 'rents': 0}
+            cashflow_data[date_str]['rents'] += row.revenue
+            
+        # Format for chart
+        chart_data = []
+        for date_str, revenues in sorted(cashflow_data.items()):
+            chart_data.append({
+                'date': date_str,
+                'sales': round(revenues['sales'], 2),
+                'rents': round(revenues['rents'], 2),
+                'total': round(revenues['sales'] + revenues['rents'], 2)
+            })
+            
+        return chart_data
+    
+    @staticmethod
+    def get_sales_by_date(days=30):
+        end_date = datetime.utcnow()
+        start_date = end_date - timedelta(days=days)
+
+        sales_by_date = db.session.query(
+            func.date(Sale.created_at).label('date'),
+            func.sum(Sale.total_amount).label('amount')
+        ).filter(
+            Sale.created_at >= start_date,
+            Sale.created_at <= end_date
+        ).group_by('date').order_by('date').all()
+
+        labels = [datetime.strptime(row.date, '%Y-%m-%d').strftime('%b %d') for row in sales_by_date]
+        values = [round(row.amount, 2) for row in sales_by_date]
+
+        return {'labels': labels, 'values': values}
+
+    @staticmethod
+    def get_sales_by_month():
+        sales_by_month = db.session.query(
+            func.strftime('%Y-%m', Sale.created_at).label('month'),
+            func.sum(Sale.total_amount).label('amount')
+        ).group_by('month').order_by('month').all()
+
+        labels = [datetime.strptime(row.month, '%Y-%m').strftime('%B %Y') for row in sales_by_month]
+        values = [round(row.amount, 2) for row in sales_by_month]
+
+        return {'labels': labels, 'values': values}
+
+    @staticmethod
+    def get_low_stock_products(threshold=10):
+        """
+        Retrieves products with stock quantity below a certain threshold.
+        """
+        low_stock_products = Product.query.filter(
+            Product.is_active == True,
+            Product.quantity_in_stock < threshold
+        ).all()
+        
+        return [product.to_dict() for product in low_stock_products]

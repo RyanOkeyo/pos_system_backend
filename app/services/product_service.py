@@ -4,9 +4,12 @@ from sqlalchemy.exc import IntegrityError
 class ProductService:
     
     @staticmethod
-    def get_all_products(category=None, search=None):
+    def get_all_products(category=None, search=None, include_inactive=False):
 
         query = Product.query
+
+        if not include_inactive:
+            query = query.filter_by(is_active=True)
         
         if category:
             query = query.filter_by(category=category)
@@ -29,10 +32,22 @@ class ProductService:
     @staticmethod
     def create_product(product_data):
         try:
-            product = Product(**product_data)
-            db.session.add(product)
+            # Explicitly map fields to the model
+            new_product = Product(
+                name=product_data.get('name'),
+                description=product_data.get('description'),
+                category=product_data.get('category'),
+                sale_price=product_data.get('sale_price'),
+                buying_price=product_data.get('buying_price'),
+                rent_price_per_day=product_data.get('rent_price_per_day'),
+                quantity_in_stock=product_data.get('quantity_in_stock', 0),
+                reorder_level=product_data.get('reorder_level', 0),
+                barcode=product_data.get('barcode'),
+                sku=product_data.get('sku')
+            )
+            db.session.add(new_product)
             db.session.commit()
-            return product, None
+            return new_product, None
         except IntegrityError as e:
             db.session.rollback()
             return None, "Product with this barcode or SKU already exists"
@@ -69,7 +84,7 @@ class ProductService:
             return False, "Product not found"
         
         try:
-            db.session.delete(product)
+            product.is_active = False
             db.session.commit()
             return True, None
         except Exception as e:
@@ -92,3 +107,7 @@ class ProductService:
         db.session.commit()
         
         return product, None
+
+    @staticmethod
+    def get_low_stock_products(threshold=10):
+        return Product.query.filter(Product.quantity_in_stock < threshold).all()

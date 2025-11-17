@@ -120,3 +120,46 @@ def get_alerts():
         'data': alerts,
         'count': len(alerts)
     }), 200
+
+@dashboard_bp.route('/cashflow-chart', methods=['GET'])
+def get_cashflow_chart_data():
+    days = request.args.get('days', 30, type=int)
+    
+    cashflow_data = DashboardService.get_cashflow_by_date(days=days)
+    
+    return jsonify({
+        'success': True,
+        'data': cashflow_data,
+        'count': len(cashflow_data)
+    }), 200
+
+@dashboard_bp.route('/sales-chart', methods=['GET'])
+def get_sales_chart_data():
+    period = request.args.get('period', 'daily', type=str)
+    
+    if period == 'monthly':
+        sales_data = DashboardService.get_sales_by_month()
+    else:
+        # Default to daily
+        days = request.args.get('days', 30, type=int)
+        sales_data = DashboardService.get_sales_by_date(days=days)
+    
+    return jsonify({
+        'success': True,
+        'data': sales_data
+    }), 200
+
+@dashboard_bp.route('/low-stock-products', methods=['GET'])
+def get_low_stock_products():
+    """
+    API endpoint to get a list of products that are low on stock.
+    """
+    threshold = request.args.get('threshold', 10, type=int)
+    
+    products = DashboardService.get_low_stock_products(threshold=threshold)
+    
+    return jsonify({
+        'success': True,
+        'data': products,
+        'count': len(products)
+    }), 200
