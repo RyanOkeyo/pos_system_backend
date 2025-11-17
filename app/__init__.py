@@ -7,7 +7,15 @@ from app.models import db
 
 def create_app():
     app = Flask(__name__)
-    CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+    
+    # Define allowed origins
+    origins = [
+        "https://pos-system-frontend-tau.vercel.app",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000"
+    ]
+
+    CORS(app, resources={r"/api/*": {"origins": origins}}, supports_credentials=True)
 
     app.config.from_object('app.config.Config')
     
