@@ -10,6 +10,8 @@ class Config:
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'jwt-secret-key-change-in-production')
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=24)
 
+    ADMIN_SECURITY_CODE = os.getenv('ADMIN_SECURITY_CODE', 'Jane001')
+
     CORS_HEADERS = 'Content-Type'
 
     DEBUG = os.getenv('DEBUG', 'True') == 'True'

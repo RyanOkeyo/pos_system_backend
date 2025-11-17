@@ -102,12 +102,23 @@ def get_sales_summary():
 
 @sales_bp.route('/recent', methods=['GET'])
 def get_recent_sales():
-    limit = request.args.get('limit', 10, type=int)
-    
-    sales = SalesService.get_all_sales()[:limit]
-    
+    limit = request.args.get('limit', 5, type=int)
+    sales = SalesService.get_recent_sales(limit=limit)
     return jsonify({
         'success': True,
         'data': [sale.to_dict() for sale in sales],
         'count': len(sales)
+    }), 200
+
+@sales_bp.route('/product-report', methods=['GET'])
+def get_product_sales_report():
+    """
+    API endpoint to get a sales report for each product.
+    """
+    report = SalesService.get_product_sales_report()
+    
+    return jsonify({
+        'success': True,
+        'data': report,
+        'count': len(report)
     }), 200

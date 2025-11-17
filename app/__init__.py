@@ -1,28 +1,38 @@
 from flask import Flask
 from flask_cors import CORS
 from app.utils.db import init_db
+from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager
+from app.models import db
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
+    CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
     app.config.from_object('app.config.Config')
     
     #Initialize database
     init_db(app)
 
+    # Initialize Migrate
+    migrate = Migrate(app, db)
+
+    # Initialize JWT Manager
+    jwt = JWTManager(app)
+
     #Register Blueprints
     from app.routes.products import products_bp
     from app.routes.sales import sales_bp
     from app.routes.rents import rents_bp
     from app.routes.dashboard import dashboard_bp
+    from app.routes.auth import auth_bp
 
     app.register_blueprint(products_bp, url_prefix='/api/products')
     app.register_blueprint(sales_bp, url_prefix='/api/sales')
     app.register_blueprint(rents_bp, url_prefix='/api/rents')
     app.register_blueprint(dashboard_bp, url_prefix='/api/dashboard')
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
     return app
 
 
- 

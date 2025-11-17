@@ -12,15 +12,18 @@ class Product(db.Model):
     
     # Pricing
     sale_price = db.Column(db.Float, nullable=False)
+    buying_price = db.Column(db.Float)
     rent_price_per_day = db.Column(db.Float)
     
     # Inventory
     quantity_in_stock = db.Column(db.Integer, default=0)
+    reorder_level = db.Column(db.Integer, default=0)
     quantity_rented = db.Column(db.Integer, default=0)
     
     # Product details
     barcode = db.Column(db.String(50), unique=True)
     sku = db.Column(db.String(50), unique=True)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
     
     # Tracking
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -40,11 +43,14 @@ class Product(db.Model):
             'description': self.description,
             'category': self.category,
             'sale_price': self.sale_price,
+            'buying_price': self.buying_price,
             'rent_price_per_day': self.rent_price_per_day,
             'quantity_in_stock': self.quantity_in_stock,
+            'reorder_level': self.reorder_level,
             'quantity_rented': self.quantity_rented,
             'barcode': self.barcode,
             'sku': self.sku,
+            'is_active': self.is_active,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }

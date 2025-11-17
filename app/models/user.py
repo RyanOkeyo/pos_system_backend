@@ -1,6 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
+from flask import current_app
+import jwt
 
 class User(db.Model):
    
@@ -17,7 +19,7 @@ class User(db.Model):
     phone = db.Column(db.String(20))
     
     # Role and permissions
-    role = db.Column(db.String(20), default='cashier')  # admin, manager, cashier
+    role = db.Column(db.String(20), default='user')  # admin, user
     is_active = db.Column(db.Boolean, default=True)
     
     # Tracking
@@ -33,6 +35,21 @@ class User(db.Model):
     
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def get_reset_token(self, expires_sec=1800):
+        return jwt.encode(
+            {'reset_user': self.id, 'exp': datetime.utcnow() + timedelta(seconds=expires_sec)},
+            current_app.config['SECRET_KEY'],
+            algorithm='HS256'
+        )
+
+    @staticmethod
+    def verify_reset_token(token):
+        try:
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+            return User.query.get(data['reset_user'])
+        except Exception:
+            return None
     
     def __repr__(self):
         return f'<User {self.username}>'

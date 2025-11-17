@@ -113,3 +113,36 @@ class SalesService:
             'total_revenue': round(total_revenue, 2),
             'average_sale': round(total_revenue / total_sales, 2) if total_sales > 0 else 0
         }
+
+    @staticmethod
+    def get_recent_sales(limit=5):
+        return Sale.query.order_by(Sale.created_at.desc()).limit(limit).all()
+
+    @staticmethod
+    def get_product_sales_report():
+        """
+        Generates a sales report for each product, including total units sold and revenue.
+        """
+        from sqlalchemy import func
+
+        report = db.session.query(
+            Product.id,
+            Product.name,
+            Product.sku,
+            func.sum(SaleItem.quantity).label('total_units_sold'),
+            func.sum(SaleItem.subtotal).label('total_revenue')
+        ).join(SaleItem, SaleItem.product_id == Product.id)\
+         .group_by(Product.id, Product.name, Product.sku)\
+         .order_by(func.sum(SaleItem.quantity).desc())\
+         .all()
+
+        return [
+            {
+                'product_id': row.id,
+                'product_name': row.name,
+                'sku': row.sku,
+                'total_units_sold': int(row.total_units_sold) if row.total_units_sold else 0,
+                'total_revenue': round(float(row.total_revenue), 2) if row.total_revenue else 0
+            }
+            for row in report
+        ]

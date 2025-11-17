@@ -129,3 +129,14 @@ def update_stock(product_id):
             'success': False,
             'message': str(e)
         }), 400
+
+@products_bp.route('/low-stock', methods=['GET'])
+def get_low_stock_products():
+    threshold = request.args.get('threshold', 10, type=int)
+    products = ProductService.get_low_stock_products(threshold=threshold)
+
+    return jsonify({
+        'success': True,
+        'data': [product.to_dict() for product in products],
+        'count': len(products)
+    }), 200
