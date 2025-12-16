@@ -31,12 +31,22 @@ class ProductService:
     
     @staticmethod
     def create_product(product_data):
+        # Check for existing product with the same name and size
+        existing_product = Product.query.filter_by(
+            name=product_data.get('name'),
+            size=product_data.get('size')
+        ).first()
+
+        if existing_product:
+            return None, "Product with this name and size already exists"
+            
         try:
             # Explicitly map fields to the model
             new_product = Product(
                 name=product_data.get('name'),
                 description=product_data.get('description'),
                 category=product_data.get('category'),
+                size=product_data.get('size'),
                 sale_price=product_data.get('sale_price'),
                 buying_price=product_data.get('buying_price'),
                 rent_price_per_day=product_data.get('rent_price_per_day'),

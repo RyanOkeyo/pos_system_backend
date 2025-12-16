@@ -34,12 +34,14 @@ def create_app():
     from app.routes.rents import rents_bp
     from app.routes.dashboard import dashboard_bp
     from app.routes.auth import auth_bp
+    from app.routes.users import users_bp
 
     app.register_blueprint(products_bp, url_prefix='/api/products')
     app.register_blueprint(sales_bp, url_prefix='/api/sales')
     app.register_blueprint(rents_bp, url_prefix='/api/rents')
     app.register_blueprint(dashboard_bp, url_prefix='/api/dashboard')
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(users_bp, url_prefix='/api/users')
 
     @app.route('/')
     def index():

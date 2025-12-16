@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.sales_service import SalesService
 from app.schemas.sale_schema import SaleCreate
+from app.utils.helpers import role_required
 from datetime import datetime
 
 sales_bp = Blueprint('sales', __name__)
@@ -49,6 +51,8 @@ def get_sale(sale_id):
 
 @sales_bp.route('', methods=['POST'], strict_slashes=False)
 @sales_bp.route('/', methods=['POST'], strict_slashes=False)
+@jwt_required()
+@role_required('admin')
 def create_sale():
     try:
         data = request.get_json()

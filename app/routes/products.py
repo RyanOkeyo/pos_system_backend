@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
 from app.services.product_service import ProductService
 from app.schemas.product_schema import ProductCreate, ProductUpdate
+from app.utils.helpers import role_required
 
 products_bp = Blueprint('products', __name__)
 
@@ -35,6 +37,8 @@ def get_product(product_id):
 
 @products_bp.route('', methods=['POST'], strict_slashes=False)
 @products_bp.route('/', methods=['POST'], strict_slashes=False)
+@jwt_required()
+@role_required('admin')
 def create_product():
     try:
         data = request.get_json()
@@ -61,6 +65,8 @@ def create_product():
         }), 400
 
 @products_bp.route('/<int:product_id>', methods=['PUT'])
+@jwt_required()
+@role_required('admin')
 def update_product(product_id):
     try:
         data = request.get_json()
@@ -90,6 +96,8 @@ def update_product(product_id):
         }), 400
 
 @products_bp.route('/<int:product_id>', methods=['DELETE'])
+@jwt_required()
+@role_required('admin')
 def delete_product(product_id):
     success, error = ProductService.delete_product(product_id)
 
@@ -105,6 +113,8 @@ def delete_product(product_id):
     }), 200
 
 @products_bp.route('/<int:product_id>/stock', methods=['PATCH'])
+@jwt_required()
+@role_required('admin')
 def update_stock(product_id):
     try:
         data = request.get_json()

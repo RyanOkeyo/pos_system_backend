@@ -19,7 +19,7 @@ class User(db.Model):
     phone = db.Column(db.String(20))
     
     # Role and permissions
-    role = db.Column(db.String(20), default='user')  # admin, user
+    role = db.Column(db.String(20), default='user')  # admin, user, normal_user
     is_active = db.Column(db.Boolean, default=True)
     
     # Tracking

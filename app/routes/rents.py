@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
 from app.services.rent_service import RentService
 from app.schemas.rent_schema import RentCreate, RentReturn
+from app.utils.helpers import role_required
 from datetime import datetime
 
 rents_bp = Blueprint('rents', __name__)
@@ -45,6 +47,8 @@ def get_rent(rent_id):
     }), 200
 
 @rents_bp.route('/', methods=['POST'])
+@jwt_required()
+@role_required('admin')
 def create_rent():
     try:
         data = request.get_json()
@@ -76,6 +80,8 @@ def create_rent():
         }), 400
 
 @rents_bp.route('/<int:rent_id>/return', methods=['POST'])
+@jwt_required()
+@role_required('admin')
 def return_rent(rent_id):
     try:
         data = request.get_json()

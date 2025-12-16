@@ -9,6 +9,7 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     category = db.Column(db.String(50))
+    size = db.Column(db.String(50))
     
     # Pricing
     sale_price = db.Column(db.Float, nullable=False)
@@ -42,6 +43,7 @@ class Product(db.Model):
             'name': self.name,
             'description': self.description,
             'category': self.category,
+            'size': self.size,
             'sale_price': self.sale_price,
             'buying_price': self.buying_price,
             'rent_price_per_day': self.rent_price_per_day,
