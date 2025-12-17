@@ -12,7 +12,9 @@ def create_app():
     origins = [
         "https://pos-system-frontend-tau.vercel.app",
         "http://localhost:3000",
-        "http://127.0.0.1:3000"
+        "http://127.0.0.1:3000",
+        "https://pos-system-frontend-git-main-ryans-projects-86863339.vercel.app",
+        "https://pos-backend-oai2.onrender.com"
     ]
 
     CORS(app, resources={r"/api/*": {"origins": origins}}, supports_credentials=True)
