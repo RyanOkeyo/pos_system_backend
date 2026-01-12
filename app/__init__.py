@@ -18,7 +18,8 @@ def create_app():
         "https://pos-backend-oai2.onrender.com",
         "https://pos-system-backend-beta.vercel.app",
         "https://pos-system-backend-git-main-ryans-projects-86863339.vercel.app",
-        "https://pos-system-backend-g1jox451s-ryans-projects-86863339.vercel.app"
+        "https://pos-system-backend-g1jox451s-ryans-projects-86863339.vercel.app",
+        "https://pos-system-backend-g3d2emkkz-ryans-projects-86863339.vercel.app"
     ]
 
     CORS(app, resources={r"/api/*": {"origins": origins}}, supports_credentials=True)
