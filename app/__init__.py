@@ -4,6 +4,7 @@ from app.utils.db import init_db
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from app.models import db
+import os
 
 def create_app():
     app = Flask(__name__, instance_path="/tmp/instance")
@@ -23,6 +24,12 @@ def create_app():
     CORS(app, resources={r"/api/*": {"origins": origins}}, supports_credentials=True)
 
     app.config.from_object('app.config.Config')
+
+    # Ensure the instance folder exists
+    try:
+        os.makedirs(app.instance_path)
+    except OSError:
+        pass
     
     #Initialize database
     init_db(app)
