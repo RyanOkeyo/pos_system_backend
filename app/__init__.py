@@ -6,7 +6,7 @@ from flask_jwt_extended import JWTManager
 from app.models import db
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, instance_path="/tmp/instance")
     
     # Define allowed origins
     origins = [
@@ -14,7 +14,10 @@ def create_app():
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "https://pos-system-frontend-git-main-ryans-projects-86863339.vercel.app",
-        "https://pos-backend-oai2.onrender.com"
+        "https://pos-backend-oai2.onrender.com",
+        "https://pos-system-backend-beta.vercel.app",
+        "https://pos-system-backend-git-main-ryans-projects-86863339.vercel.app",
+        "https://pos-system-backend-g1jox451s-ryans-projects-86863339.vercel.app"
     ]
 
     CORS(app, resources={r"/api/*": {"origins": origins}}, supports_credentials=True)
