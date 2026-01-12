@@ -4,10 +4,8 @@ from app.services.auth_service import AuthService
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route('/register', methods=['POST', 'OPTIONS'])
+@auth_bp.route('/register', methods=['POST'])
 def register():
-    if request.method == 'OPTIONS':
-        return jsonify({'message': 'CORS preflight successful'}), 200
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
@@ -25,10 +23,8 @@ def register():
 
     return jsonify({'message': 'User registered successfully', 'user': user.to_dict()}), 201
 
-@auth_bp.route('/login', methods=['POST', 'OPTIONS'])
+@auth_bp.route('/login', methods=['POST'])
 def login():
-    if request.method == 'OPTIONS':
-        return jsonify({'message': 'CORS preflight successful'}), 200
     data = request.get_json()
     login_identifier = data.get('username') or data.get('email')
     password = data.get('password')
