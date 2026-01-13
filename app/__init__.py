@@ -14,7 +14,7 @@ def create_app():
         "https://pos-system-frontend-tau.vercel.app",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "https://pos-system-backend-beta.vercel.app"
+        "https://possystembackend--ryanokeyo.replit.app"
     ]
 
     CORS(app, resources={r"/api/*": {
