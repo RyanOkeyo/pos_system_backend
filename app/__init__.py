@@ -10,12 +10,7 @@ def create_app():
     app = Flask(__name__, instance_path="/tmp/instance")
     
     # Define allowed origins
-    origins = [
-        "https://pos-system-frontend-tau.vercel.app",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "https://possystembackend--ryanokeyo.replit.app"
-    ]
+    origins = "*"
 
     CORS(app, resources={r"/api/*": {
         "origins": origins,
