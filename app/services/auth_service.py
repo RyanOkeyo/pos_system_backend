@@ -8,7 +8,8 @@ class AuthService:
     @staticmethod
     def register_user(username, password, email, role='user', security_code=None):
         if role == 'admin':
-            if not security_code or security_code != current_app.config['ADMIN_SECURITY_CODE']:
+            admin_security_code = current_app.config.get('ADMIN_SECURITY_CODE')
+            if not admin_security_code or security_code != admin_security_code:
                 return None, "Invalid security code for admin registration"
 
         if User.query.filter_by(username=username).first() or User.query.filter_by(email=email).first():
